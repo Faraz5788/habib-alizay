@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Habib & Alizay · 7 June 2026</title>
+  <meta name="description" content="You're invited to the wedding of Habib & Alizay. 7 June 2026, Grand Hyatt Dubai. #HabibKiAlizay" />
+  <meta property="og:title" content="Habib & Alizay" />
+  <meta property="og:description" content="7 June 2026 · Grand Hyatt, Dubai · #HabibKiAlizay" />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; background: #082018; font-family: 'Outfit', sans-serif; -webkit-font-smoothing: antialiased; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes shimmer { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+    .fade-up { animation: fadeUp 0.7s ease-out forwards; }
+    .fade-in { animation: fadeIn 1s ease-out forwards; }
+    .shimmer { animation: shimmer 3s ease-in-out infinite; }
+    .delay-1 { animation-delay: 0.1s; opacity: 0; }
+    .delay-2 { animation-delay: 0.3s; opacity: 0; }
+    .delay-3 { animation-delay: 0.5s; opacity: 0; }
+    .delay-4 { animation-delay: 0.7s; opacity: 0; }
+    .delay-5 { animation-delay: 0.9s; opacity: 0; }
+    input::placeholder { color: rgba(232, 223, 201, 0.4); }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script type="text/babel" data-presets="react">
+    const { useState } = React;
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbweB5DoYkoDf-OUr1y0PlxkxULkabFcmHjKPVm8scNhzUdrX7urAM_OB7KW_X897JCCbw/exec";
+
+    const colors = {
+      bg: "#0F3D2E",
+      bgDeep: "#082018",
+      gold: "#D4A574",
+      goldBright: "#E8C896",
+      cream: "#FBF6EC",
+      creamDim: "#E8DFC9",
+    };
+
+    function Ornament({ size = 60, color = colors.gold }) {
+      return (
+        <svg width={size} height={size / 3} viewBox="0 0 120 40" fill="none">
+          <path d="M5 20 Q30 5, 60 20 T115 20" stroke={color} strokeWidth="0.8" fill="none" />
+          <circle cx="60" cy="20" r="3" fill={color} />
+          <circle cx="60" cy="20" r="1.5" fill={colors.bgDeep} />
+          <path d="M50 20 L40 16 M50 20 L40 24" stroke={color} strokeWidth="0.6" />
+          <path d="M70 20 L80 16 M70 20 L80 24" stroke={color} strokeWidth="0.6" />
+        </svg>
+      );
+    }
+
+    function RSVP() {
+      const [step, setStep] = useState("welcome");
+      const [name, setName] = useState("");
+      const [guests, setGuests] = useState("");
+      const [submitting, setSubmitting] = useState(false);
+      const [error, setError] = useState("");
+
+      const sendToSheet = async (response, guestCount = null) => {
+        setSubmitting(true);
+        setError("");
+        const params = new URLSearchParams({
+          name: name.trim() || "Anonymous",
+          response,
+          guests: guestCount || "",
+        });
+        try {
+          await fetch(APPS_SCRIPT_URL + "?" + params.toString(), {
+            method: "GET",
+            mode: "no-cors",
+          });
+          setSubmitting(false);
+          return true;
+        } catch (e) {
+          console.error(e);
+          setError("Something went wrong — please try again");
+          setSubmitting(false);
+          return false;
+        }
+      };
+
+      const handleResponse = async (choice) => {
+        if (choice === "yes") { setStep("yes-guests"); return; }
+        const ok = await sendToSheet(choice);
+        if (ok) setStep(choice === "no" ? "thanks-no" : "thanks-maybe");
+      };
+
+      const submitGuests = async () => {
+        const ok = await sendToSheet("yes", guests.trim() || "1");
+        if (ok) setStep("thanks-yes");
+      };
+
+      return (
+        <div style={{
+          minHeight: "100vh",
+          background: `linear-gradient(180deg, ${colors.bg} 0%, ${colors.bgDeep} 100%)`,
+          color: colors.cream, fontFamily: "'Outfit', sans-serif",
+          position: "relative", overflow: "hidden", display: "flex", flexDirection: "column",
+        }}>
+          <div style={{
+            position: "absolute", inset: 0, opacity: 0.06,
+            backgroundImage: `radial-gradient(circle at 20% 10%, ${colors.gold} 0%, transparent 40%), radial-gradient(circle at 80% 80%, ${colors.gold} 0%, transparent 40%)`,
+            pointerEvents: "none",
+          }} />
+
+          <svg style={{ position: "absolute", top: 12, left: 12, opacity: 0.4 }} width="60" height="60" viewBox="0 0 60 60" fill="none">
+            <path d="M5 5 Q5 30, 30 30 M5 5 Q30 5, 30 30" stroke={colors.gold} strokeWidth="0.8" fill="none" />
+            <circle cx="5" cy="5" r="2" fill={colors.gold} />
+          </svg>
+          <svg style={{ position: "absolute", top: 12, right: 12, opacity: 0.4, transform: "scaleX(-1)" }} width="60" height="60" viewBox="0 0 60 60" fill="none">
+            <path d="M5 5 Q5 30, 30 30 M5 5 Q30 5, 30 30" stroke={colors.gold} strokeWidth="0.8" fill="none" />
+            <circle cx="5" cy="5" r="2" fill={colors.gold} />
+          </svg>
+
+          <div style={{
+            flex: 1, maxWidth: 480, width: "100%", margin: "0 auto",
+            padding: "40px 24px 32px", display: "flex", flexDirection: "column",
+            justifyContent: "center", position: "relative", zIndex: 1,
+          }}>
+            {step === "welcome" && (
+              <div style={{ textAlign: "center" }}>
+                <p className="fade-in delay-1" style={{ fontSize: 11, letterSpacing: 4, color: colors.goldBright, textTransform: "uppercase", marginBottom: 24 }}>
+                  Together with their families
+                </p>
+                <h1 className="fade-up delay-2" style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "min(64px, 14vw)", fontWeight: 500, lineHeight: 1.05, margin: "0 0 8px", fontStyle: "italic" }}>Habib</h1>
+                <p className="fade-in delay-3" style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 24, color: colors.gold, margin: "8px 0", fontStyle: "italic" }}>&</p>
+                <h1 className="fade-up delay-3" style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "min(64px, 14vw)", fontWeight: 500, lineHeight: 1.05, margin: "0 0 32px", fontStyle: "italic" }}>Alizay</h1>
+                <div className="fade-in delay-4" style={{ display: "flex", justifyContent: "center", marginBottom: 24 }}>
+                  <Ornament size={100} />
+                </div>
+                <p className="fade-up delay-4" style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 22, fontStyle: "italic", color: colors.creamDim, margin: "0 0 24px" }}>
+                  request the pleasure of your company
+                </p>
+                <div className="fade-up delay-5" style={{ borderTop: `1px solid ${colors.gold}40`, borderBottom: `1px solid ${colors.gold}40`, padding: "16px 0", margin: "8px 0 32px" }}>
+                  <p style={{ fontSize: 11, letterSpacing: 3, color: colors.goldBright, textTransform: "uppercase", margin: "0 0 8px" }}>Save the Date</p>
+                  <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 26, margin: "0 0 4px", fontWeight: 500 }}>7th June 2026</p>
+                  <p style={{ fontSize: 13, color: colors.creamDim, margin: 0 }}>Grand Hyatt · Dubai</p>
+                </div>
+                <p className="fade-up delay-5 shimmer" style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 18, color: colors.gold, letterSpacing: 2, fontStyle: "italic", margin: "0 0 24px" }}>#HabibKiAlizay</p>
+                <button className="fade-up delay-5" onClick={() => setStep("form")}
+                  style={{ background: colors.gold, color: colors.bgDeep, border: "none", padding: "16px 40px", fontSize: 12, letterSpacing: 3, textTransform: "uppercase", cursor: "pointer", fontFamily: "'Outfit', sans-serif", fontWeight: 500, borderRadius: 2 }}>
+                  RSVP →
+                </button>
+              </div>
+            )}
+
+            {step === "form" && (
+              <div className="fade-up" style={{ textAlign: "center" }}>
+                <Ornament size={80} />
+                <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 38, fontWeight: 500, fontStyle: "italic", margin: "16px 0 8px" }}>Will you join us?</h2>
+                <p style={{ color: colors.creamDim, fontSize: 14, marginBottom: 28 }}>Please share your name and let us know</p>
+                <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name"
+                  style={{ width: "100%", padding: "14px 16px", background: "transparent", border: `1px solid ${colors.gold}80`, borderRadius: 4, color: colors.cream, fontSize: 16, fontFamily: "'Outfit', sans-serif", marginBottom: 24, outline: "none", textAlign: "center" }} />
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  <button onClick={() => handleResponse("yes")} disabled={!name.trim() || submitting}
+                    style={{ background: colors.gold, color: colors.bgDeep, border: "none", padding: "16px", fontSize: 13, letterSpacing: 3, textTransform: "uppercase", cursor: name.trim() ? "pointer" : "not-allowed", fontFamily: "'Outfit', sans-serif", fontWeight: 500, borderRadius: 2, opacity: name.trim() ? 1 : 0.4 }}>
+                    Joyfully Accept
+                  </button>
+                  <button onClick={() => handleResponse("maybe")} disabled={!name.trim() || submitting}
+                    style={{ background: "transparent", color: colors.cream, border: `1px solid ${colors.gold}80`, padding: "16px", fontSize: 13, letterSpacing: 3, textTransform: "uppercase", cursor: name.trim() ? "pointer" : "not-allowed", fontFamily: "'Outfit', sans-serif", fontWeight: 500, borderRadius: 2, opacity: name.trim() ? 1 : 0.4 }}>
+                    Maybe
+                  </button>
+                  <button onClick={() => handleResponse("no")} disabled={!name.trim() || submitting}
+                    style={{ background: "transparent", color: colors.creamDim, border: `1px solid ${colors.creamDim}40`, padding: "16px", fontSize: 13, letterSpacing: 3, textTransform: "uppercase", cursor: name.trim() ? "pointer" : "not-allowed", fontFamily: "'Outfit', sans-serif", fontWeight: 500, borderRadius: 2, opacity: name.trim() ? 1 : 0.4 }}>
+                    Regretfully Decline
+                  </button>
+                </div>
+                {submitting && <p style={{ color: colors.creamDim, fontSize: 12, marginTop: 16 }}>Sending...</p>}
+                {error && <p style={{ color: "#FF9B9B", fontSize: 12, marginTop: 16 }}>{error}</p>}
+              </div>
+            )}
+
+            {step === "yes-guests" && (
+              <div className="fade-up" style={{ textAlign: "center" }}>
+                <Ornament size={80} />
+                <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 36, fontWeight: 500, fontStyle: "italic", margin: "16px 0 8px" }}>Wonderful!</h2>
+                <p style={{ color: colors.creamDim, fontSize: 14, marginBottom: 28 }}>How many will be joining us in total?</p>
+                <input type="text" value={guests} onChange={(e) => setGuests(e.target.value)} placeholder="e.g. 2"
+                  style={{ width: "100%", padding: "16px", background: "transparent", border: `1px solid ${colors.gold}80`, borderRadius: 4, color: colors.cream, fontSize: 18, fontFamily: "'Cormorant Garamond', serif", marginBottom: 20, outline: "none", textAlign: "center" }} />
+                <button onClick={submitGuests} disabled={!guests.trim() || submitting}
+                  style={{ background: colors.gold, color: colors.bgDeep, border: "none", padding: "16px 40px", fontSize: 12, letterSpacing: 3, textTransform: "uppercase", cursor: guests.trim() ? "pointer" : "not-allowed", fontFamily: "'Outfit', sans-serif", fontWeight: 500, borderRadius: 2, width: "100%", opacity: guests.trim() ? 1 : 0.4 }}>
+                  {submitting ? "Sending..." : "Confirm"}
+                </button>
+                {error && <p style={{ color: "#FF9B9B", fontSize: 12, marginTop: 16 }}>{error}</p>}
+              </div>
+            )}
+
+            {step === "thanks-yes" && (
+              <div className="fade-up" style={{ textAlign: "center" }}>
+                <Ornament size={100} />
+                <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 44, fontWeight: 500, fontStyle: "italic", margin: "20px 0 8px", lineHeight: 1.1 }}>
+                  Thank you,<br />{name}
+                </h2>
+                <p style={{ color: colors.gold, fontSize: 16, margin: "16px 0 8px", fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic" }}>We can't wait to celebrate with you</p>
+                <p style={{ color: colors.creamDim, fontSize: 13, marginTop: 24 }}>7th June 2026 · Grand Hyatt, Dubai</p>
+                <p className="shimmer" style={{ fontFamily: "'Cormorant Garamond', serif", color: colors.gold, letterSpacing: 2, fontStyle: "italic", marginTop: 32, fontSize: 16 }}>#HabibKiAlizay</p>
+              </div>
+            )}
+
+            {step === "thanks-no" && (
+              <div className="fade-up" style={{ textAlign: "center" }}>
+                <Ornament size={80} />
+                <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 38, fontWeight: 500, fontStyle: "italic", margin: "20px 0 16px", lineHeight: 1.1 }}>
+                  You'll be missed,<br />{name}
+                </h2>
+                <p style={{ color: colors.creamDim, fontSize: 15, lineHeight: 1.6, margin: "0 auto", maxWidth: 320 }}>
+                  Thank you for letting us know. We're truly sad you can't make it — your presence will be missed on our special day.
+                </p>
+                <p style={{ color: colors.gold, fontSize: 14, marginTop: 24, fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic" }}>With love, Habib & Alizay</p>
+              </div>
+            )}
+
+            {step === "thanks-maybe" && (
+              <div className="fade-up" style={{ textAlign: "center" }}>
+                <Ornament size={80} />
+                <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 36, fontWeight: 500, fontStyle: "italic", margin: "20px 0 16px" }}>We understand</h2>
+                <p style={{ color: colors.creamDim, fontSize: 15, lineHeight: 1.6, margin: "0 auto 20px", maxWidth: 340 }}>
+                  Thanks {name}! For catering and seating arrangements, could you please confirm by:
+                </p>
+                <div style={{ borderTop: `1px solid ${colors.gold}60`, borderBottom: `1px solid ${colors.gold}60`, padding: "16px 0", margin: "16px auto", maxWidth: 280 }}>
+                  <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 26, color: colors.gold, margin: 0, fontWeight: 500 }}>25th May 2026</p>
+                </div>
+                <button onClick={() => { setStep("form"); setGuests(""); }}
+                  style={{ background: "transparent", color: colors.gold, border: `1px solid ${colors.gold}80`, padding: "12px 28px", fontSize: 11, letterSpacing: 2, textTransform: "uppercase", cursor: "pointer", fontFamily: "'Outfit', sans-serif", marginTop: 16, borderRadius: 2 }}>
+                  Update my response
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<RSVP />);
+  </script>
+</body>
+</html>
